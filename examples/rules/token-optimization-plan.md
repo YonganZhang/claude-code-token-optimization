@@ -1,11 +1,14 @@
-# Token Optimization Plan
+AppliesTo: both
+# Token Optimization Plan (TOP)
 
 ## 分层策略
-- 每条命令/工具调用/网络请求都要遵守 → Rule（≤10行）
-- 特定任务触发 → Skill description 触发（省 Rule 固定成本）
-- 详细方法论 → 加载 skill `token-optimization`
+- 常驻规则 → Rule（≤10行），特定任务 → Skill 按需加载
+- 闲聊/简单查询 → 不记录项目日志
 
-## 持久日志
-- 推进性交互（任务/问题/决策）→ 追加到 `docs/plan/plan.md`
-- 闲聊/简单查询 → 不记录
-- 会话开始若 plan.md 存在 → 先读取恢复上下文
+## Debug
+- 同一问题连续 2 次未解决 → 最大循环 5 次后停止汇报
+
+## Plan
+- `Yongan/docx/00-总索引.md` 由 Hook 自动注入，视为权威上下文
+- 复杂任务（≥3 步）且无索引时，建议初始化 → 加载 skill `top`
+- 完成动作后更新索引状态和 progress.md → 详细规则见 skill `top`

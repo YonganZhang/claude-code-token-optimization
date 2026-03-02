@@ -2,13 +2,13 @@
 
 ## 成本分类
 
-以下模型同时适用于 Claude Code 和 OpenClaw。
+以下模型同时适用于 Claude Code 和 Codex。
 
 | 类型 | 固定成本（每轮） | 按需成本 |
 |------|-----------------|---------|
 | 规则文件 (Rules/TOOLS.md) | 全文 | 无 |
 | Skill | 一行 description | 读取时加载全文 |
-| 项目说明 (CLAUDE.md/SOUL.md) | 全文 | 无 |
+| 项目说明 (CLAUDE.md/AGENTS.md) | 全文 | 无 |
 | MCP/工具（无延迟加载） | 所有工具 schema | 调用结果 |
 | MCP/工具（有延迟加载） | 工具名列表 | 搜索+调用结果 |
 
@@ -22,9 +22,9 @@
 { "env": { "ENABLE_TOOL_SEARCH": "true" } }
 ```
 
-### OpenClaw: 工具默认按需加载
+### Codex: 工具默认按需加载
 
-OpenClaw 的 Skills 已经是按需加载的（只看到 name+description），无需额外配置。
+Codex 的 Skills 已经是按需加载的（只看到 name+description），无需额外配置。
 
 ## 规则文件精简技巧
 

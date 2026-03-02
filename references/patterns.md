@@ -1,6 +1,6 @@
 # 设计模式
 
-以下模式同时适用于 Claude Code 和 OpenClaw。
+以下模式同时适用于 Claude Code 和 Codex。
 
 ## 一、触发索引 + Skill 联动
 
@@ -12,7 +12,7 @@
 - 创建/修改 Rule 或 Skill → 先读 skill `skill-creator`
 ```
 
-**OpenClaw 示例（AGENTS.md，加几行）：**
+**Codex 示例（AGENTS.md，加几行）：**
 ```
 ## Skills 使用规则
 - 初始化项目文档时 → 先加载 skill `project-doc-guide`
@@ -37,13 +37,13 @@ my-skill/
 
 **SKILL.md 是索引，不是文档。** 超过 50 行必须拆分。
 
-OpenClaw 用 `{baseDir}/references/xxx.md` 引用，Claude Code 用相对路径。
+Codex 用 `{baseDir}/references/xxx.md` 引用，Claude Code 用相对路径。
 
 ## 三、项目说明瘦身
 
-| | Claude Code | OpenClaw |
+| | Claude Code | Codex |
 |---|---|---|
-| 项目说明文件 | CLAUDE.md | SOUL.md |
+| 项目说明文件 | CLAUDE.md | AGENTS.md |
 | 原则 | 只放项目独有规范 | 只放个性和核心行为 |
 
 查阅内容拆成多个小项目 Skill：

@@ -1,38 +1,24 @@
 # Claude Code 从零搭建指南
 
-> 同时参考 OpenClaw 版本：`references/setup-openclaw.md`
+> 同时参考 Codex 版本：`references/setup-codex.md`
 
-## Step 1：开启 Tool Search
-
-在 `~/.claude/settings.json` 中加入：
-
-```json
-{
-  "env": {
-    "ENABLE_TOOL_SEARCH": "true"
-  }
-}
-```
-
-效果：所有 MCP 工具 100% 延迟加载，AI 通过 ToolSearch 按需搜索。
-
-## Step 2：安装 Skill
+## Step 1：安装 Skill
 
 将本仓库复制到 Claude Code 的 skills 目录：
 
 ```bash
-git clone https://github.com/YonganZhang/claude-code-token-optimization.git \
-  ~/.claude/skills/token-optimization
+git clone https://github.com/YonganZhang/code-token-optiization.git \
+  ~/.claude/skills/top
 ```
 
 或者只复制核心文件：
 ```bash
-mkdir -p ~/.claude/skills/token-optimization/references
-cp SKILL.md ~/.claude/skills/token-optimization/
-cp references/*.md ~/.claude/skills/token-optimization/references/
+mkdir -p ~/.claude/skills/top/references
+cp SKILL.md ~/.claude/skills/top/
+cp references/*.md ~/.claude/skills/top/references/
 ```
 
-## Step 3：创建触发 Rule
+## Step 2：创建触发 Rule
 
 ```bash
 cat > ~/.claude/rules/environment.md << 'EOF'
@@ -46,7 +32,7 @@ EOF
 
 这 5 行 Rule 是整套体系的入口。AI 每轮看到触发条件，匹配时才加载对应 Skill。
 
-## Step 4：精简你的 CLAUDE.md
+## Step 3：精简你的 CLAUDE.md
 
 CLAUDE.md 每轮全文加载，只保留：
 
@@ -57,7 +43,7 @@ CLAUDE.md 每轮全文加载，只保留：
 
 **禁止放入**全局 Rules 已有内容（代理、路径规范、写入限制等）。
 
-## Step 5：创建项目 Skills
+## Step 4：创建项目 Skills
 
 ```bash
 mkdir -p .claude/skills/project-modules .claude/skills/project-data
@@ -75,7 +61,7 @@ description: "项目模块索引 — 各模块职责、入口、关键导出"
 | api  | REST API | src/api/router.ts |
 ```
 
-## Step 6：验证
+## Step 5：验证
 
 新对话中说「帮我初始化项目文档」，观察 AI 是否：
 - ✅ 读取了 `project-doc-guide` skill
@@ -90,12 +76,12 @@ description: "项目模块索引 — 各模块职责、入口、关键导出"
 cp examples/rules/*.md ~/.claude/rules/
 ```
 
-## Claude Code vs OpenClaw 对照
+## Claude Code vs Codex 对照
 
-| 概念 | Claude Code | OpenClaw |
+| 概念 | Claude Code | Codex |
 |------|------------|----------|
-| 项目说明 | CLAUDE.md | SOUL.md |
-| 规则文件 | ~/.claude/rules/*.md | TOOLS.md + AGENTS.md |
-| Skills 位置 | ~/.claude/skills/ | ~/.openclaw/skills/ |
+| 项目说明 | CLAUDE.md | AGENTS.md |
+| 规则文件 | ~/.claude/rules/*.md | ~/.codex/rules/*.md |
+| Skills 位置 | ~/.claude/skills/ | ~/.codex/skills/ |
 | Skill 结构 | SKILL.md + references/ | SKILL.md + references/ |
-| 延迟加载 | ENABLE_TOOL_SEARCH | 默认已启用 |
+| Hooks | 原生支持 | 不支持（AGENTS.md 替代） |

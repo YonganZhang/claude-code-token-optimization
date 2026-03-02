@@ -1,6 +1,6 @@
 # 小红书系列帖：Claude Code Token 优化体系
 
-> GitHub 仓库链接：https://github.com/YonganZhang/claude-code-token-optimization
+> GitHub 仓库链接：https://github.com/YonganZhang/code-token-optiization
 
 ---
 

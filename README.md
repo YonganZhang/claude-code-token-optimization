@@ -2,16 +2,16 @@
   <h1 align="center">🧠 Token Optimization Plan (TOP)</h1>
   <p align="center">
     <strong>省 60% Token，让 AI 只看它需要的信息</strong><br>
-    适用于 Claude Code &amp; OpenClaw
+    适用于 Claude Code &amp; Codex
   </p>
   <p align="center">
     <a href="#-快速开始">⚡ 快速开始</a> · <a href="#-核心架构">🏗️ 架构</a> · <a href="#-五大设计模式">🎯 模式</a> · <a href="docs/posts/xiaohongshu-series.md">📱 小红书</a>
   </p>
   <p align="center">
     <img src="https://img.shields.io/badge/Claude_Code-支持-blueviolet?style=for-the-badge" alt="Claude Code">
-    <img src="https://img.shields.io/badge/OpenClaw-支持-orange?style=for-the-badge" alt="OpenClaw">
+    <img src="https://img.shields.io/badge/Codex-支持-orange?style=for-the-badge" alt="Codex">
     <img src="https://img.shields.io/badge/Token_Saved-60%25+-success?style=for-the-badge" alt="Token Saved 60%+">
-    <img src="https://img.shields.io/github/license/YonganZhang/claude-code-token-optimization?style=for-the-badge" alt="License">
+    <img src="https://img.shields.io/github/license/YonganZhang/code-token-optiization?style=for-the-badge" alt="License">
   </p>
 </p>
 
@@ -25,13 +25,10 @@
 
 ```bash
 # 1. 安装 Skill
-git clone https://github.com/YonganZhang/claude-code-token-optimization.git \
-  ~/.claude/skills/token-optimization
+git clone https://github.com/YonganZhang/code-token-optiization.git \
+  ~/.claude/skills/top
 
-# 2. 开启 Tool Search（在 ~/.claude/settings.json 的 env 中）
-#    "ENABLE_TOOL_SEARCH": "true"
-
-# 3. 创建触发 Rule
+# 2. 创建触发 Rule
 cat > ~/.claude/rules/environment.md << 'EOF'
 # Environment
 - 项目文档/CLAUDE.md/初始化项目 → 先读 skill `project-doc-guide`
@@ -39,18 +36,18 @@ cat > ~/.claude/rules/environment.md << 'EOF'
 - 任务完成后新增模块 → 批量更新 .claude/skills/project-*
 EOF
 
-# 4. 复制示例 Rules（可选）
+# 3. 复制示例 Rules（可选）
 cp examples/rules/*.md ~/.claude/rules/
 ```
 
 👉 详细步骤见 [references/setup-claude-code.md](references/setup-claude-code.md)
 
-### OpenClaw 用户
+### Codex 用户
 
 ```bash
 # 1. 安装 Skill
-git clone https://github.com/YonganZhang/claude-code-token-optimization.git \
-  ~/.openclaw/skills/token-optimization
+git clone https://github.com/YonganZhang/code-token-optiization.git \
+  ~/.codex/skills/top
 
 # 2. 在 AGENTS.md 中加入触发索引
 cat >> AGENTS.md << 'EOF'
@@ -60,17 +57,15 @@ cat >> AGENTS.md << 'EOF'
 - 创建新 Skill 时 → 先加载 skill `skill-creator`
 - 任务完成后新增模块 → 批量更新 project-* 索引
 EOF
-
-# 3. 瘦身 SOUL.md（只留个性和核心行为，查阅内容拆到 Skills）
 ```
 
-👉 详细步骤见 [references/setup-openclaw.md](references/setup-openclaw.md)
+👉 详细步骤见 [references/setup-codex.md](references/setup-codex.md)
 
 ### 验证安装
 
 新对话中说「帮我初始化项目文档」，观察 AI 是否：
 - ✅ 加载了 `project-doc-guide` skill
-- ✅ 生成了精简的项目说明（CLAUDE.md / SOUL.md）
+- ✅ 生成了精简的项目说明（CLAUDE.md / AGENTS.md）
 - ✅ 创建了多个项目 Skill（project-modules 等）
 
 ---
@@ -92,13 +87,12 @@ EOF
 
 ### 两个平台，同一套方法
 
-| 概念 | Claude Code | OpenClaw |
+| 概念 | Claude Code | Codex |
 |------|------------|----------|
-| 项目说明 | CLAUDE.md | SOUL.md |
-| 规则文件 | ~/.claude/rules/*.md | TOOLS.md + AGENTS.md |
-| Skills 位置 | ~/.claude/skills/ | ~/.openclaw/skills/ |
+| 项目说明 | CLAUDE.md | AGENTS.md |
+| 规则文件 | ~/.claude/rules/*.md | ~/.codex/rules/*.md |
+| Skills 位置 | ~/.claude/skills/ | ~/.codex/skills/ |
 | Skill 结构 | SKILL.md + references/ | SKILL.md + references/ |
-| 延迟加载 | ENABLE_TOOL_SEARCH | 默认已启用 |
 
 ---
 
@@ -182,7 +176,6 @@ SKILL.md 是目录，不是文档。超过 50 行必须拆分。
 ### 5️⃣ 工具延迟加载
 
 Claude Code: `"ENABLE_TOOL_SEARCH": "true"`
-OpenClaw: 默认已启用
 
 ---
 
@@ -195,7 +188,7 @@ OpenClaw: 默认已启用
 │   ├── cost-model.md                   # 上下文成本模型
 │   ├── patterns.md                     # 五大设计模式详解
 │   ├── setup-claude-code.md            # Claude Code 搭建指南
-│   └── setup-openclaw.md              # OpenClaw 搭建指南
+│   └── setup-codex.md                  # Codex 搭建指南
 ├── examples/                           # 示例配置文件
 │   ├── rules/                          # 示例 Rules（每个 ≤10 行）
 │   └── skills/                         # 示例 Skills
@@ -209,7 +202,7 @@ OpenClaw: 默认已启用
 ## 🤔 FAQ
 
 **Q: 这套方案适用于哪些工具？**
-A: Claude Code（VSCode 扩展 / CLI）和 OpenClaw。核心概念适用于任何使用 Skills 的 AI 编程助手。
+A: Claude Code（VSCode 扩展 / CLI）和 Codex。核心概念适用于任何使用 Skills 的 AI 编程助手。
 
 **Q: 小项目也需要吗？**
 A: 小项目可以只用 `project-modules` 一个 Skill。核心收益来自项目说明瘦身和规则精简。
