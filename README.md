@@ -1,226 +1,189 @@
-<p align="center">
-  <h1 align="center">🧠 Token Optimization Plan (TOP)</h1>
-  <p align="center">
-    <strong>省 60% Token，让 AI 只看它需要的信息</strong><br>
-    适用于 Claude Code &amp; Codex
-  </p>
-  <p align="center">
-    <a href="#-快速开始">⚡ 快速开始</a> · <a href="#-核心架构">🏗️ 架构</a> · <a href="#-五大设计模式">🎯 模式</a> · <a href="docs/posts/xiaohongshu-series.md">📱 小红书</a>
-  </p>
-  <p align="center">
-    <img src="https://img.shields.io/badge/Claude_Code-支持-blueviolet?style=for-the-badge" alt="Claude Code">
-    <img src="https://img.shields.io/badge/Codex-支持-orange?style=for-the-badge" alt="Codex">
-    <img src="https://img.shields.io/badge/Token_Saved-60%25+-success?style=for-the-badge" alt="Token Saved 60%+">
-    <img src="https://img.shields.io/github/license/YonganZhang/code-token-optiization?style=for-the-badge" alt="License">
-  </p>
-</p>
+<div align="center">
+
+# Token Optimization Plan
+
+**A practical system for cutting AI coding assistant token usage by 50-60% through progressive disclosure.**
+
+Built for Claude Code, Codex, and skill-based agent workflows.
+
+[![Claude Code](https://img.shields.io/badge/Claude_Code-Supported-111827)](./references/setup-claude-code.md)
+[![Codex](https://img.shields.io/badge/Codex-Supported-F97316)](./references/setup-codex.md)
+[![Progressive Disclosure](https://img.shields.io/badge/Pattern-Progressive_Disclosure-2563EB)](./references/patterns.md)
+[![Token Savings](https://img.shields.io/badge/Token_Saved-50--60%25-16A34A)](./references/cost-model.md)
+[![Stars](https://img.shields.io/github/stars/YonganZhang/code-token-optiization?style=social)](https://github.com/YonganZhang/code-token-optiization/stargazers)
+
+[Quick Start](#quick-start) · [How It Works](#how-it-works) · [Core Patterns](#core-patterns) · [Academic Research Stack](#academic-research-stack) · [中文](#中文说明) · [日本語](#日本語) · [한국어](#한국어)
+
+</div>
 
 ---
 
-## ⚡ 快速开始
+## Why This Exists
 
-> 本仓库本身就是一个标准 Skill 包（根目录有 `SKILL.md` + `references/`），可直接安装。
+Most AI coding projects waste context on the same mistake:
 
-### Claude Code 用户
+- huge project instructions loaded every turn
+- skills that act like long documents instead of indexes
+- implementation details stored in the wrong layer
+- rules that are too long and too static
+
+This repository packages a reusable operating model for skill-based coding agents: keep always-loaded context small, then reveal detail only when triggered.
+
+## What You Get
+
+- A complete token optimization methodology for Claude Code and Codex
+- A self-contained skill package with `SKILL.md` and `references/`
+- Installation guides for both platforms
+- Example rules and example skills
+- A layered architecture you can copy into your own projects
+
+## Quick Start
+
+### Claude Code
 
 ```bash
-# 1. 安装 Skill
-git clone https://github.com/YonganZhang/code-token-optiization.git \
-  ~/.claude/skills/top
-
-# 2. 创建触发 Rule
-cat > ~/.claude/rules/environment.md << 'EOF'
-# Environment
-- 项目文档/CLAUDE.md/初始化项目 → 先读 skill `project-doc-guide`
-- 创建/修改 Rule 或 Skill → 先读 skill `skill-creator`
-- 任务完成后新增模块 → 批量更新 .claude/skills/project-*
-EOF
-
-# 3. 复制示例 Rules（可选）
-cp examples/rules/*.md ~/.claude/rules/
+git clone https://github.com/YonganZhang/code-token-optiization.git ~/.claude/skills/top
 ```
 
-👉 详细步骤见 [references/setup-claude-code.md](references/setup-claude-code.md)
+Then read:
 
-### Codex 用户
+- [`references/setup-claude-code.md`](./references/setup-claude-code.md)
+
+### Codex
 
 ```bash
-# 1. 安装 Skill
-git clone https://github.com/YonganZhang/code-token-optiization.git \
-  ~/.codex/skills/top
-
-# 2. 在 AGENTS.md 中加入触发索引
-cat >> AGENTS.md << 'EOF'
-
-## Skills 使用规则
-- 初始化项目文档时 → 先加载 skill `project-doc-guide`
-- 创建新 Skill 时 → 先加载 skill `skill-creator`
-- 任务完成后新增模块 → 批量更新 project-* 索引
-EOF
+git clone https://github.com/YonganZhang/code-token-optiization.git ~/.codex/skills/top
 ```
 
-👉 详细步骤见 [references/setup-codex.md](references/setup-codex.md)
+Then read:
 
-### 验证安装
+- [`references/setup-codex.md`](./references/setup-codex.md)
 
-新对话中说「帮我初始化项目文档」，观察 AI 是否：
-- ✅ 加载了 `project-doc-guide` skill
-- ✅ 生成了精简的项目说明（CLAUDE.md / AGENTS.md）
-- ✅ 创建了多个项目 Skill（project-modules 等）
+## How It Works
 
----
+The core idea is a four-layer progressive disclosure model:
 
-## 💡 这是什么？
-
-一套通过**分层管理**实现 AI 编程助手 Token 消耗降低 50-60% 的完整方法论。
-
-### 📊 Before vs After
-
-| | 优化前 | 优化后 |
-|---|---|---|
-| 项目说明 | 200 行 × 每轮 | **60 行** × 每轮 |
-| 规则文件 | 50+ 行 × 每轮 | **46 行** × 每轮 |
-| 查阅信息 | 全塞项目说明 | **按需加载** Skill |
-| 工具 schema | 全部预加载 | **延迟加载** |
-| **20 轮对话总加载** | **~5000 行** | **~2100 行** |
-| **节省** | — | **🎯 55-65%** |
-
-### 两个平台，同一套方法
-
-| 概念 | Claude Code | Codex |
-|------|------------|----------|
-| 项目说明 | CLAUDE.md | AGENTS.md |
-| 规则文件 | ~/.claude/rules/*.md | ~/.codex/rules/*.md |
-| Skills 位置 | ~/.claude/skills/ | ~/.codex/skills/ |
-| Skill 结构 | SKILL.md + references/ | SKILL.md + references/ |
-
----
-
-## 🏗️ 核心架构
-
-### 四层渐进式披露
-
-```
-          ┌─────────────────────┐
-    L0    │  规则文件（≤10行）    │  ← 每轮加载，触发索引
-          ├─────────────────────┤
-    L1    │ Skill SKILL.md      │  ← 触发时加载，目录索引
-          │    （≤50行）         │
-          ├─────────────────────┤
-    L2    │ Skill references/   │  ← AI 按需 Read
-          │   *.md 详情文件      │
-          ├─────────────────────┤
-    L3    │     源码文件         │  ← AI 按需 Read
-          └─────────────────────┘
-               越往下越大，加载越少
+```text
+L0  tiny rules / trigger index        -> loaded every turn
+L1  SKILL.md index                    -> loaded when triggered
+L2  references/*.md detail files      -> read only as needed
+L3  source code / project files       -> read only as needed
 ```
 
-**核心思想：每一层只在需要时才加载下一层。**
+If you move volatile or verbose information downward, you reduce recurring token cost without losing capability.
 
----
+## Core Patterns
 
-## 🎯 五大设计模式
+### 1. Trigger Index + Skill Loading
 
-### 1️⃣ 触发索引 + Skill 联动
+Rules should trigger the right skill, not duplicate its full content.
 
-> 规则文件不存详情，只做触发器。
+### 2. SKILL.md as an Index, Not a Manual
 
-```
-触发流程：
+`SKILL.md` should stay short and route the agent to the right reference files.
 
-用户说"帮我初始化项目"
-        │
-        ▼
-规则文件匹配到"初始化项目"（5行，每轮已加载）
-        │
-        ▼
-加载 project-doc-guide Skill（53行，仅此时加载）
-        │
-        ▼
-AI 按规则生成项目说明 + 多个项目 Skill
-```
+### 3. Slim Project Instructions
 
-**对比：** 不联动 = 53行 × 每轮。联动后 = 5行 × 每轮 + 53行 × 偶尔。
+Keep `CLAUDE.md` / `AGENTS.md` focused on identity, constraints, and stable project facts.
 
-### 2️⃣ Skill 多文件渐进式披露
+### 4. Self-Maintained Indexes
 
-```
-my-skill/
-├── SKILL.md              # 📋 索引（≤50行）
+When modules or workflows change, regenerate the relevant skill indexes instead of growing global instructions.
+
+### 5. On-Demand Tool and Context Loading
+
+Only load what the current task actually needs.
+
+## Before vs After
+
+| Scenario | Before | After |
+| --- | --- | --- |
+| project instructions | loaded in bulk every turn | slim stable core only |
+| rule files | long explanatory text | short triggers |
+| skills | monolithic docs | layered indexes |
+| deep details | preloaded | fetched when relevant |
+| total context cost | high and repetitive | materially lower |
+
+## Repository Layout
+
+```text
+code-token-optiization/
+├── SKILL.md
 ├── references/
-│   ├── detail-a.md       # 📖 详情（AI 按需 Read）
-│   └── detail-b.md
-├── scripts/              # ⚙️ 可执行脚本
-└── assets/               # 📁 输出资源
+│   ├── cost-model.md
+│   ├── patterns.md
+│   ├── setup-claude-code.md
+│   └── setup-codex.md
+├── examples/
+│   ├── rules/
+│   └── skills/
+└── docs/
+    └── posts/
 ```
 
-SKILL.md 是目录，不是文档。超过 50 行必须拆分。
+## Who This Is For
 
-### 3️⃣ 项目说明瘦身
+- heavy Claude Code users
+- Codex users maintaining larger projects
+- people building custom agent workflows with skills
+- teams that care about context efficiency, reproducibility, and maintainability
 
-| 留在项目说明 ✅ | 拆到项目 Skill 📦 |
-|---|---|
-| 项目身份（一句话） | `project-modules` 模块索引 |
-| 项目独有代码规范 | `project-data` 数据/配置索引 |
-| 常用开发命令 | `project-pipelines` 构建流程 |
+## Academic Research Stack
 
-**判断标准：** 删掉后 AI 还能正确写代码？→ 拆出去。
+This repository is part of a broader collection around academic research and vibe coding:
 
-### 4️⃣ 索引自维护
+| Project | What It Helps With |
+| --- | --- |
+| [code-token-optiization](https://github.com/YonganZhang/code-token-optiization) | token-efficient architecture for coding agents |
+| [mathpix-converter](https://github.com/YonganZhang/mathpix-converter) | convert academic PDFs and equations into Markdown |
+| [gemini-research-oauth](https://github.com/YonganZhang/gemini-research-oauth) | run Gemini Deep Research from CLI with OAuth |
+| [SpeakFlow](https://github.com/YonganZhang/SpeakFlow) | offline voice input for writing and prompting |
+| [openakita](https://github.com/YonganZhang/openakita) | open AI assistant framework with skills and agent architecture |
 
-```
-规则文件中的触发器：
-- 任务完成后，若新增/重构了模块或接口 → 批量更新 project-* 索引
-```
+Together these repos cover ingestion, research, prompting, and agent engineering.
 
-### 5️⃣ 工具延迟加载
+## 中文说明
 
-Claude Code: `"ENABLE_TOOL_SEARCH": "true"`
+这个仓库本质上是一套 AI 编程助手上下文治理方法论，不是单一脚本。
 
----
+它要解决的问题是：
 
-## 📁 仓库结构
+- `CLAUDE.md` / `AGENTS.md` 越写越长
+- Rule 和 Skill 职责混乱
+- 每轮对话都重复加载大量没必要的信息
+- 项目一大，Token 消耗明显失控
 
-```
-.
-├── SKILL.md                            # 🌟 Skill 包入口（安装后 AI 可直接使用）
-├── references/                         # 详细参考文档
-│   ├── cost-model.md                   # 上下文成本模型
-│   ├── patterns.md                     # 五大设计模式详解
-│   ├── setup-claude-code.md            # Claude Code 搭建指南
-│   └── setup-codex.md                  # Codex 搭建指南
-├── examples/                           # 示例配置文件
-│   ├── rules/                          # 示例 Rules（每个 ≤10 行）
-│   └── skills/                         # 示例 Skills
-│       ├── token-optimization/         # 本体系 Skill（多文件示范）
-│       └── project-doc-guide/          # 项目文档拆分规则
-└── docs/posts/                         # 小红书系列帖文案
-```
+核心思路是“渐进式披露”：
 
----
+- 每轮都加载的内容尽量短
+- 只有触发时才加载 `SKILL.md`
+- 只有确实需要时才读 `references/`
+- 源码和实现细节放在最底层按需读取
 
-## 🤔 FAQ
+如果你在重度使用 Claude Code 或 Codex，这个仓库会比较有价值。
 
-**Q: 这套方案适用于哪些工具？**
-A: Claude Code（VSCode 扩展 / CLI）和 Codex。核心概念适用于任何使用 Skills 的 AI 编程助手。
+## 日本語
 
-**Q: 小项目也需要吗？**
-A: 小项目可以只用 `project-modules` 一个 Skill。核心收益来自项目说明瘦身和规则精简。
+このリポジトリは、Claude Code や Codex のような AI コーディング支援ツールで、毎ターンのトークン消費を減らすための実践的な設計手法をまとめたものです。
 
-**Q: AI 真的会按触发器去读 Skill 吗？**
-A: 大概率会。触发词设计覆盖了常见表述。如果没触发，在指令中加一句「先读 skill xxx」。
+- ルールは短く保つ
+- `SKILL.md` は索引として使う
+- 詳細は `references/` に分離
+- 必要な時だけ情報を読む
 
-**Q: 索引过时了怎么办？**
-A: 直接说「更新项目 skill 索引」，AI 会重新扫描并更新。
+大きめのプロジェクトや skill ベースの運用に特に有効です。
 
----
+## 한국어
 
-## 📜 License
+이 저장소는 Claude Code나 Codex 같은 AI 코딩 도구에서 매 턴 반복되는 토큰 비용을 줄이기 위한 실전 설계 방법을 정리한 것입니다.
 
-MIT — 随意使用、修改、分享。
+- 규칙 파일은 짧게 유지
+- `SKILL.md`는 인덱스로 사용
+- 자세한 내용은 `references/`로 분리
+- 필요한 순간에만 정보를 읽도록 설계
 
----
+프로젝트 규모가 크거나 skill 기반 워크플로를 운영할 때 특히 유용합니다。
 
-<p align="center">
-  <strong>⭐ 如果这套方案帮到了你，给个 Star 吧！</strong>
-</p>
+## License
+
+No `LICENSE` file is included in this repository yet. Adding one would make reuse and contributions much clearer.
